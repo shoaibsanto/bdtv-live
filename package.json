@@ -1,0 +1,23 @@
+{
+  "name": "bdtv-live",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Watch popular Bangladeshi TV channels live in HD — free, fast and mobile friendly.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "hls.js": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  }
+}
