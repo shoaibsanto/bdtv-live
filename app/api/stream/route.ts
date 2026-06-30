@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { ProxyAgent } from "undici";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -6,6 +7,18 @@ export const maxDuration = 30;
 
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
+
+// Optional upstream proxy (e.g. a Bangladesh residential exit) used ONLY as a
+// fallback when the direct fetch fails — lets geo-restricted CDNs (gpcdn etc.)
+// work for visitors outside Bangladesh. Disabled unless UPSTREAM_PROXY is set,
+// so credentials never live in the repo and no proxy bandwidth is used by default.
+const UPSTREAM_PROXY = process.env.UPSTREAM_PROXY;
+let proxyDispatcher: ProxyAgent | undefined;
+function getProxyDispatcher(): ProxyAgent | undefined {
+  if (!UPSTREAM_PROXY) return undefined;
+  if (!proxyDispatcher) proxyDispatcher = new ProxyAgent(UPSTREAM_PROXY);
+  return proxyDispatcher;
+}
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -83,9 +96,8 @@ export async function GET(req: NextRequest) {
     return new Response("Unsupported protocol", { status: 400, headers: CORS_HEADERS });
   }
 
-  let upstream: Response;
-  try {
-    upstream = await fetch(target, {
+  const fetchOpts = (useProxy: boolean): RequestInit => {
+    const opts: RequestInit & { dispatcher?: ProxyAgent } = {
       headers: {
         "User-Agent": USER_AGENT,
         Referer: `${parsed.protocol}//${parsed.host}/`,
@@ -94,9 +106,28 @@ export async function GET(req: NextRequest) {
       },
       redirect: "follow",
       cache: "no-store",
-    });
+    };
+    if (useProxy) opts.dispatcher = getProxyDispatcher();
+    return opts;
+  };
+
+  let upstream: Response;
+  try {
+    upstream = await fetch(target, fetchOpts(false));
+    // Direct attempt was blocked (geo) → retry once via the upstream proxy.
+    if ((!upstream.ok && upstream.status >= 400) && getProxyDispatcher()) {
+      upstream = await fetch(target, fetchOpts(true));
+    }
   } catch {
-    return new Response("Upstream fetch failed", { status: 502, headers: CORS_HEADERS });
+    if (getProxyDispatcher()) {
+      try {
+        upstream = await fetch(target, fetchOpts(true));
+      } catch {
+        return new Response("Upstream fetch failed", { status: 502, headers: CORS_HEADERS });
+      }
+    } else {
+      return new Response("Upstream fetch failed", { status: 502, headers: CORS_HEADERS });
+    }
   }
 
   if (!upstream.ok && upstream.status >= 400) {
