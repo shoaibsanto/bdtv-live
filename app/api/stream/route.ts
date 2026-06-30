@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { ProxyAgent } from "undici";
+import { ProxyAgent, fetch as undiciFetch } from "undici";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -96,8 +96,10 @@ export async function GET(req: NextRequest) {
     return new Response("Unsupported protocol", { status: 400, headers: CORS_HEADERS });
   }
 
-  const fetchOpts = (useProxy: boolean): RequestInit => {
-    const opts: RequestInit & { dispatcher?: ProxyAgent } = {
+  const fetchOpts = (useProxy: boolean): Parameters<typeof undiciFetch>[1] => {
+    // undici's fetch honours the `dispatcher` option (Next.js patches the global
+    // fetch and strips it), so we always use undiciFetch for upstream requests.
+    const opts: Parameters<typeof undiciFetch>[1] = {
       headers: {
         "User-Agent": USER_AGENT,
         Referer: `${parsed.protocol}//${parsed.host}/`,
@@ -105,23 +107,23 @@ export async function GET(req: NextRequest) {
         Accept: "*/*",
       },
       redirect: "follow",
-      cache: "no-store",
     };
-    if (useProxy) opts.dispatcher = getProxyDispatcher();
+    if (useProxy) opts!.dispatcher = getProxyDispatcher();
     return opts;
   };
 
-  let upstream: Response;
+  type UpstreamResponse = Awaited<ReturnType<typeof undiciFetch>>;
+  let upstream: UpstreamResponse;
   try {
-    upstream = await fetch(target, fetchOpts(false));
+    upstream = await undiciFetch(target, fetchOpts(false));
     // Direct attempt was blocked (geo) → retry once via the upstream proxy.
-    if ((!upstream.ok && upstream.status >= 400) && getProxyDispatcher()) {
-      upstream = await fetch(target, fetchOpts(true));
+    if (!upstream.ok && upstream.status >= 400 && getProxyDispatcher()) {
+      upstream = await undiciFetch(target, fetchOpts(true));
     }
   } catch {
     if (getProxyDispatcher()) {
       try {
-        upstream = await fetch(target, fetchOpts(true));
+        upstream = await undiciFetch(target, fetchOpts(true));
       } catch {
         return new Response("Upstream fetch failed", { status: 502, headers: CORS_HEADERS });
       }
@@ -160,5 +162,5 @@ export async function GET(req: NextRequest) {
   const len = upstream.headers.get("content-length");
   if (len) headers.set("Content-Length", len);
 
-  return new Response(upstream.body, { status: upstream.status, headers });
+  return new Response(upstream.body as unknown as BodyInit, { status: upstream.status, headers });
 }
