@@ -28,24 +28,27 @@ export default function Browse({ channels }: { channels: Channel[] }) {
     );
   }, [channels, q, query, searching]);
 
-  const visibleCats = categories.filter((cat) => (active === "All" || active === cat));
+  const visibleCats = categories.filter((cat) => active === "All" || active === cat);
 
   return (
     <>
       <div className="toolbar">
         <div className="container">
+          <label htmlFor="channel-search" className="sr-only">
+            Search channels
+          </label>
           <input
+            id="channel-search"
             type="search"
             className="search"
             placeholder="চ্যানেল খুঁজুন… Search 200+ channels (NTV, Somoy, Sports…)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search channels"
           />
-          <div className="filters" role="tablist" aria-label="Categories">
+          <nav className="filters" aria-label="Channel categories">
             <button
-              role="tab"
-              aria-selected={active === "All"}
+              type="button"
+              aria-pressed={active === "All"}
               className={`chip ${active === "All" ? "chip--active" : ""}`}
               onClick={() => {
                 setActive("All");
@@ -57,9 +60,9 @@ export default function Browse({ channels }: { channels: Channel[] }) {
             {categories.map((cat) => (
               <button
                 key={cat}
-                role="tab"
-                aria-selected={active === cat}
-                className={`chip ${active === cat ? "chip--active" : ""}`}
+                type="button"
+                aria-pressed={active === cat}
+                className={`chip ${cat === "Sports" ? "chip--sport" : ""} ${active === cat ? "chip--active" : ""}`}
                 onClick={() => {
                   setActive(cat);
                   setQuery("");
@@ -69,47 +72,56 @@ export default function Browse({ channels }: { channels: Channel[] }) {
                 <span className="chip__count">{counts[cat] || 0}</span>
               </button>
             ))}
-          </div>
+          </nav>
         </div>
       </div>
 
       <div className="container">
         {searching ? (
           filtered.length === 0 ? (
-            <p className="empty">
-              “{query}” — কোনো চ্যানেল পাওয়া যায়নি। (No channels found.)
-            </p>
+            <p className="empty">“{query}” — কোনো চ্যানেল পাওয়া যায়নি। (No channels found.)</p>
           ) : (
-            <section className="section">
+            <section className="section" aria-labelledby="results-heading">
               <div className="section__head">
-                <h2 className="section__title">🔎 ফলাফল / Results</h2>
+                <h2 id="results-heading" className="section__title">
+                  🔎 ফলাফল / Results
+                </h2>
                 <span className="section__count">{filtered.length} channels</span>
               </div>
-              <div className="grid">
+              <ul className="grid" role="list">
                 {filtered.map((c) => (
                   <ChannelCard key={c.slug} channel={c} />
                 ))}
-              </div>
+              </ul>
             </section>
           )
         ) : (
           visibleCats.map((cat) => {
             const list = channels.filter((c) => c.category === cat);
             if (list.length === 0) return null;
+            const isSport = cat === "Sports";
             return (
-              <section key={cat} id={catAnchor(cat)} className="section">
+              <section
+                key={cat}
+                id={catAnchor(cat)}
+                className={`section ${isSport ? "section--sport" : ""}`}
+                aria-labelledby={`${catAnchor(cat)}-heading`}
+              >
                 <div className="section__head">
-                  <h2 className="section__title">
+                  <h2 id={`${catAnchor(cat)}-heading`} className="section__title">
                     <span className="ic">{categoryMeta[cat].icon}</span>
-                    {cat} <span style={{ color: "var(--muted)", fontWeight: 600 }}>· {categoryMeta[cat].bn}</span>
+                    {cat}{" "}
+                    <span style={{ color: "var(--muted)", fontWeight: 600 }}>
+                      · {categoryMeta[cat].bn}
+                    </span>
                   </h2>
                   <span className="section__count">{list.length} channels</span>
                 </div>
-                <div className="grid">
+                <ul className="grid" role="list">
                   {list.map((c) => (
                     <ChannelCard key={c.slug} channel={c} />
                   ))}
-                </div>
+                </ul>
               </section>
             );
           })
