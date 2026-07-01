@@ -22,12 +22,15 @@ export interface Channel {
 }
 
 /**
- * 203 channels — every stream URL returned a valid live HLS manifest
+ * 206 channels — every stream URL returned a valid live HLS manifest
  * (HTTP 200 + #EXTM3U) when tested on 2026-06-30. When a channel had multiple
  * working sources, the lowest-latency (least buffering) stream was kept.
  * Played through the /api/stream proxy (adds CORS, upgrades http -> https).
  */
 export const channels: Channel[] = [
+  { slug: "ksa-sports-1", name: "KSA Sports 1", bn: "কেএসএ স্পোর্টস ১", category: "Sports", quality: "1080p", logo: "https://i.imgur.com/ONKNOAp.png", stream: "https://aloula-redirect.vercel.app/9/playlist.m3u8", desc: "KSA Sports 1 live — Saudi Arabia sports channel (football, matches and events)." },
+  { slug: "ksa-sports-2", name: "KSA Sports 2", bn: "কেএসএ স্পোর্টস ২", category: "Sports", quality: "1080p", logo: "https://i.imgur.com/v8ULLqg.png", stream: "https://aloula-redirect.vercel.app/10/playlist.m3u8", desc: "KSA Sports 2 live — Saudi Arabia sports channel (football, matches and events)." },
+  { slug: "ksa-sports-3", name: "KSA Sports 3", bn: "কেএসএ স্পোর্টস ৩", category: "Sports", quality: "1080p", logo: "https://i.imgur.com/BXfCvez.png", stream: "https://aloula-redirect.vercel.app/16/playlist.m3u8", desc: "KSA Sports 3 live — Saudi Arabia sports channel (football, matches and events)." },
   { slug: "star-news", name: "Star News", bn: "স্টার নিউজ", category: "News", quality: "HD", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d5/Star_News_Bangladesh_Logo.svg/1280px-Star_News_Bangladesh_Logo.svg.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1710/output/1701.m3u8", desc: "Star News Bangladesh live — 24-hour Bangla news channel." },
   { slug: "ekattor-tv", name: "Ekattor TV", bn: "একাত্তর টিভি", category: "News", quality: "HD", logo: "https://i.imgur.com/zoLwwUK.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1705/output/1705.m3u8", desc: "Ekattor TV (71) live — Bangla news, talk shows and debate." },
   { slug: "dbc-news", name: "DBC News", bn: "ডিবিসি নিউজ", category: "News", quality: "HD", logo: "https://i.imgur.com/Qbt6q4z.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1728/output/index.m3u8", desc: "DBC News live — Bangladeshi 24-hour news television channel." },
