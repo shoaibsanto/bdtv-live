@@ -117,7 +117,10 @@ export async function GET(req: NextRequest) {
       headers: {
         "User-Agent": USER_AGENT,
         Referer: `${parsed.protocol}//${parsed.host}/`,
-        Origin: `${parsed.protocol}//${parsed.host}`,
+        // No Origin header: this is a server-to-server fetch, so Origin serves no
+        // purpose — and Akamai-signed CDNs (kwikmotion, via aloula-redirect)
+        // reject any request carrying Origin with 403, treating it as a
+        // disallowed cross-origin browser call.
         Accept: "*/*",
       },
       redirect: "follow",
