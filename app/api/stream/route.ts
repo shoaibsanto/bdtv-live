@@ -8,16 +8,30 @@ export const maxDuration = 30;
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
 
-// Optional upstream proxy (e.g. a Bangladesh residential exit) used ONLY as a
-// fallback when the direct fetch fails — lets geo-restricted CDNs (gpcdn etc.)
-// work for visitors outside Bangladesh. Disabled unless UPSTREAM_PROXY is set,
-// so credentials never live in the repo and no proxy bandwidth is used by default.
+// Optional upstream proxy (e.g. a Bangladesh residential exit). Used as a
+// fallback when a direct fetch fails — lets geo-restricted CDNs (gpcdn etc.)
+// work for visitors outside Bangladesh — and as the *primary* path for CDNs that
+// issue IP-bound tokens (see IP_BOUND_HOSTS below). Disabled unless UPSTREAM_PROXY
+// is set, so credentials never live in the repo and no proxy bandwidth is used by
+// default.
 const UPSTREAM_PROXY = process.env.UPSTREAM_PROXY;
 let proxyDispatcher: ProxyAgent | undefined;
 function getProxyDispatcher(): ProxyAgent | undefined {
   if (!UPSTREAM_PROXY) return undefined;
   if (!proxyDispatcher) proxyDispatcher = new ProxyAgent(UPSTREAM_PROXY);
   return proxyDispatcher;
+}
+
+// Hosts that hand out IP-bound Akamai tokens (hdntl / hdnts). For these, every
+// hop — master manifest, sub-playlists AND segments — must egress from the SAME
+// IP or the CDN answers 403. On serverless each /api/stream invocation can get a
+// different egress IP, so the master mints a token for IP-A while the segment
+// request arrives from IP-B → the stream loads its poster then dies. Pinning
+// these hosts to the single stable-IP upstream proxy keeps the whole chain on one
+// IP. Without UPSTREAM_PROXY set these behave as before (direct, likely 403).
+const IP_BOUND_HOSTS = ["kwikmotion.com", "aloula-redirect.vercel.app"];
+function needsStableEgress(host: string): boolean {
+  return IP_BOUND_HOSTS.some((h) => host === h || host.endsWith("." + h));
 }
 
 const CORS_HEADERS: Record<string, string> = {
@@ -114,16 +128,20 @@ export async function GET(req: NextRequest) {
 
   type UpstreamResponse = Awaited<ReturnType<typeof undiciFetch>>;
   let upstream: UpstreamResponse;
+  // IP-bound CDNs must go through the proxy first so the token is minted and
+  // used from one stable IP; everything else stays direct-first (proxy is only a
+  // geo fallback). If no proxy is configured, preferProxy is false either way.
+  const preferProxy = needsStableEgress(parsed.host) && !!getProxyDispatcher();
   try {
-    upstream = await undiciFetch(target, fetchOpts(false));
-    // Direct attempt was blocked (geo) → retry once via the upstream proxy.
+    upstream = await undiciFetch(target, fetchOpts(preferProxy));
+    // Primary attempt failed → try the other path once (proxy⇄direct).
     if (!upstream.ok && upstream.status >= 400 && getProxyDispatcher()) {
-      upstream = await undiciFetch(target, fetchOpts(true));
+      upstream = await undiciFetch(target, fetchOpts(!preferProxy));
     }
   } catch {
     if (getProxyDispatcher()) {
       try {
-        upstream = await undiciFetch(target, fetchOpts(true));
+        upstream = await undiciFetch(target, fetchOpts(!preferProxy));
       } catch {
         return new Response("Upstream fetch failed", { status: 502, headers: CORS_HEADERS });
       }
