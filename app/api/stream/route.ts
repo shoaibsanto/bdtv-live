@@ -20,15 +20,6 @@ function getProxyDispatcher(): ProxyAgent | undefined {
   return proxyDispatcher;
 }
 
-// Hosts that issue IP-locked signed tokens (Akamai hdnts/hdntl). Every request in
-// the chain must exit from ONE consistent IP, so we skip the direct attempt and go
-// straight through the sticky upstream proxy — otherwise Vercel's rotating egress
-// IPs invalidate the token between master → variant → segment fetches.
-const FORCE_PROXY_HOSTS = ["aloula-redirect.vercel.app", "live.kwikmotion.com"];
-function mustForceProxy(host: string): boolean {
-  return !!getProxyDispatcher() && FORCE_PROXY_HOSTS.some((h) => host === h || host.endsWith("." + h));
-}
-
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -121,14 +112,12 @@ export async function GET(req: NextRequest) {
     return opts;
   };
 
-  const forceProxy = mustForceProxy(parsed.host);
-
   type UpstreamResponse = Awaited<ReturnType<typeof undiciFetch>>;
   let upstream: UpstreamResponse;
   try {
-    upstream = await undiciFetch(target, fetchOpts(forceProxy));
+    upstream = await undiciFetch(target, fetchOpts(false));
     // Direct attempt was blocked (geo) → retry once via the upstream proxy.
-    if (!upstream.ok && upstream.status >= 400 && !forceProxy && getProxyDispatcher()) {
+    if (!upstream.ok && upstream.status >= 400 && getProxyDispatcher()) {
       upstream = await undiciFetch(target, fetchOpts(true));
     }
   } catch {
