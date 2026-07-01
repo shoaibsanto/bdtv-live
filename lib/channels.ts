@@ -22,7 +22,7 @@ export interface Channel {
 }
 
 /**
- * 206 channels — every stream URL returned a valid live HLS manifest
+ * 205 channels — every stream URL returned a valid live HLS manifest
  * (HTTP 200 + #EXTM3U) when tested on 2026-06-30. When a channel had multiple
  * working sources, the lowest-latency (least buffering) stream was kept.
  * Played through the /api/stream proxy (adds CORS, upgrades http -> https).
@@ -200,7 +200,7 @@ export const channels: Channel[] = [
   { slug: "sky-news-weather", name: "Sky News Weather", bn: "", category: "Lifestyle", quality: "Live", logo: "https://s3.aynaott.com/storage/78b7ab973209ec06346cf8acfd8544cd", stream: "https://distro001-gb-hls1-prd.delivery.skycdp.com/easel_cdn/ngrp:weather_loop.stream_all/playlist.m3u8", desc: "Sky News Weather live streaming online in HD on BDTV Live." },
   { slug: "travel-xp", name: "Travel XP", bn: "", category: "Lifestyle", quality: "Live", logo: "https://s3.aynaott.com/storage/a676d2f5ddf6e5f978b3d51876dceecf", stream: "https://27c980761ff9437d929e64647afe183a.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RakutenTV-eu_TravelXP/playlist.m3u8", desc: "Travel XP live streaming online in HD on BDTV Live." },
   { slug: "adventure-earth", name: "Adventure Earth", bn: "", category: "Lifestyle", quality: "Live", logo: "https://s3.aynaott.com/storage/13c04e44967d653c70eac9670b47fa5d", stream: "https://autentic-adventure-earth-1-eu.rakuten.wurl.tv/playlist.m3u8", desc: "Adventure Earth live streaming online in HD on BDTV Live." },
-  { slug: "animal-planet-hd", name: "Animal Planet HD", bn: "", category: "Lifestyle", quality: "HD", logo: "", stream: "https://tiger-hub.vercel.app@vodzong.mjunoon.tv:8087/streamtest/Animal-Planet-158-3/playlist.m3u8", desc: "Animal Planet HD live streaming online in HD on BDTV Live." },
+  { slug: "animal-planet-hd", name: "Animal Planet HD", bn: "", category: "Lifestyle", quality: "HD", logo: "", stream: "https://vodzong.mjunoon.tv:8087/streamtest/Animal-Planet-158-3/playlist.m3u8", desc: "Animal Planet HD live streaming online in HD on BDTV Live." },
   { slug: "nhk-world", name: "NHK World", bn: "", category: "International", quality: "Live", logo: "", stream: "http://103.175.73.12:8080/live/417/417_0.m3u8", desc: "NHK World live streaming online in HD on BDTV Live." },
   { slug: "zee-anmol-tv", name: "Zee Anmol TV", bn: "", category: "International", quality: "Live", logo: "", stream: "http://103.175.73.12:8080/live/256/256_0.m3u8", desc: "Zee Anmol TV live streaming online in HD on BDTV Live." },
   { slug: "zee-action", name: "Zee Action", bn: "", category: "International", quality: "Live", logo: "", stream: "http://103.175.73.12:8080/live/270/270_0.m3u8", desc: "Zee Action live streaming online in HD on BDTV Live." },
@@ -224,7 +224,6 @@ export const channels: Channel[] = [
   { slug: "court-tv", name: "Court TV", bn: "", category: "International", quality: "Live", logo: "https://s3.aynaott.com/storage/7deacf82c7f75cf7aaee5e0935c3d2c8", stream: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-courttv-tablo/playlist.m3u8", desc: "Court TV live streaming online in HD on BDTV Live." },
   { slug: "r-plus-gold", name: "R Plus Gold", bn: "", category: "International", quality: "Live", logo: "", stream: "https://cdn-4.pishow.tv/live/1231/1231_1.m3u8", desc: "R Plus Gold live streaming online in HD on BDTV Live." },
   { slug: "sony-atth", name: "Sony ATTH", bn: "", category: "International", quality: "Live", logo: "https://s3.aynaott.com/storage/f7bfca4f0a3860067bf2eac37f41214c", stream: "https://live20.bozztv.com/giatvplayout7/giatv-209611/index.m3u8", desc: "Sony ATTH live streaming online in HD on BDTV Live." },
-  { slug: "pcv", name: "pcv", bn: "", category: "International", quality: "Live", logo: "", stream: "https://padmaonline.duckdns.org:8088/pcv/index.m3u8", desc: "pcv live streaming online in HD on BDTV Live." },
   { slug: "akash-aath", name: "Akash Aath", bn: "", category: "International", quality: "Live", logo: "", stream: "https://live.thebosstv.com:30443/dwlive/AAKAASH-AATH/chunks.m3u8", desc: "Akash Aath live streaming online in HD on BDTV Live." },
   { slug: "colors-infinity-sd", name: "Colors Infinity SD", bn: "", category: "International", quality: "SD", logo: "", stream: "https://livecdn.live247stream.com/joomusic/tv/playlist.m3u8", desc: "Colors Infinity SD live streaming online in HD on BDTV Live." },
   { slug: "cmac-tv", name: "CMAC TV", bn: "", category: "International", quality: "Live", logo: "https://s3.aynaott.com/storage/14a329b450239b9a4beaa4953c33367b", stream: "https://reflect-vod-cmac.cablecast.tv/live-11/live/stream-2/live.m3u8", desc: "CMAC TV live streaming online in HD on BDTV Live." },

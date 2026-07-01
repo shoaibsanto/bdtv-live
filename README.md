@@ -8,7 +8,7 @@ Built with **Next.js (App Router)** + **hls.js**, deployed on **Vercel**.
 
 ## Features
 
-- ⚡ **202 live channels**, each stream verified to return a valid live HLS manifest, with the
+- ⚡ **205 live channels**, each stream verified to return a valid live HLS manifest, with the
   lowest-latency (least buffering) source chosen when a channel had duplicates.
 - 🗂️ **Categorized browsing** with sticky category nav + instant search.
 - 🔌 **Built-in HLS/CORS proxy** (`/api/stream`) so streams that lack CORS headers (most BD IPTV
