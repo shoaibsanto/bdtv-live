@@ -22,7 +22,7 @@ export interface Channel {
 }
 
 /**
- * 202 channels — every stream URL returned a valid live HLS manifest
+ * 203 channels — every stream URL returned a valid live HLS manifest
  * (HTTP 200 + #EXTM3U) when tested on 2026-06-30. When a channel had multiple
  * working sources, the lowest-latency (least buffering) stream was kept.
  * Played through the /api/stream proxy (adds CORS, upgrades http -> https).
@@ -33,7 +33,8 @@ export const channels: Channel[] = [
   { slug: "dbc-news", name: "DBC News", bn: "ডিবিসি নিউজ", category: "News", quality: "HD", logo: "https://i.imgur.com/Qbt6q4z.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1728/output/index.m3u8", desc: "DBC News live — Bangladeshi 24-hour news television channel." },
   { slug: "news24", name: "News24", bn: "নিউজ ২৪", category: "News", quality: "HD", logo: "https://i.imgur.com/fkTHh75.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1708/output/1708.m3u8", desc: "News24 Bangladesh live — breaking news around the clock." },
   { slug: "channel-24", name: "Channel 24", bn: "চ্যানেল ২৪", category: "News", quality: "HD", logo: "https://i.imgur.com/4JLkaF7.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8", desc: "Channel 24 live — round-the-clock Bangla news and analysis." },
-  { slug: "somoy-tv", name: "Somoy TV", bn: "সময় টিভি", category: "News", quality: "HD", logo: "https://i.imgur.com/i54AQic.png", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8", desc: "Somoy TV live — 24/7 breaking news from Bangladesh." },
+  { slug: "somoy-tv", name: "Somoy TV", bn: "সময় টিভি", category: "News", quality: "HD", logo: "https://i.imgur.com/i54AQic.png", stream: "http://114.130.57.233:8080/Somoy-TV-3Mb/tracks-v1a1/mono.m3u8?token=SkQuhAXZxgBan1", desc: "Somoy TV live — 24/7 breaking news from Bangladesh." },
+  { slug: "channel-1", name: "Channel 1", bn: "চ্যানেল ১", category: "Entertainment", quality: "HD", logo: "", stream: "https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8", desc: "Channel 1 (চ্যানেল ওয়ান) live — Bangla entertainment, drama and shows." },
   { slug: "wion", name: "Wion", bn: "", category: "News", quality: "Live", logo: "https://s3.aynaott.com/storage/671cfb22f8d0362ae01403b6e748f2e2", stream: "https://d7x8z4yuq42qn.cloudfront.net/index_7.m3u8", desc: "Wion live streaming online in HD on BDTV Live." },
   { slug: "e24", name: "E24", bn: "", category: "News", quality: "Live", logo: "", stream: "http://103.175.73.12:8080/live/159/159_0.m3u8", desc: "E24 live streaming online in HD on BDTV Live." },
   { slug: "tv9-bangla", name: "TV9 Bangla", bn: "", category: "News", quality: "Live", logo: "https://s3.aynaott.com/storage/7b93f6be496c9fd25769b09970180c4c", stream: "https://dyjmyiv3bp2ez.cloudfront.net/pub-iotv9banaen8yq/liveabr/playlist.m3u8", desc: "TV9 Bangla live streaming online in HD on BDTV Live." },
