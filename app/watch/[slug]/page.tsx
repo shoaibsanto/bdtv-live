@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Player from "@/components/Player";
 import ChannelCard from "@/components/ChannelCard";
 import { channels, getChannel, relatedChannels } from "@/lib/channels";
-import { categoryMeta, catAnchor } from "@/lib/categoryMeta";
+import { categoryMeta, categorySlug } from "@/lib/categoryMeta";
 import { site } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -22,13 +22,20 @@ export async function generateMetadata({
   const channel = getChannel(slug);
   if (!channel) return { title: "Channel not found" };
 
-  const title = `${channel.name} Live ${channel.bn ? "(" + channel.bn + ")" : ""}`.trim();
-  const description = `${channel.name} লাইভ দেখুন — ${channel.desc} Watch ${channel.name} live online free in ${channel.quality} on ${site.name}.`;
+  const title = `${channel.name} Live ${channel.bn ? "(" + channel.bn + ")" : ""} — Watch Free HD`.trim();
+  const description = `${channel.desc} Watch ${channel.name} live streaming online free in ${channel.quality} on ${site.name} — no app, no signup.`;
   const url = `${site.url}/watch/${channel.slug}`;
 
   return {
     title,
     description,
+    keywords: [
+      `${channel.name} live`,
+      `${channel.name} live streaming`,
+      `watch ${channel.name} online`,
+      `${channel.name} HD free`,
+      channel.bn ? `${channel.bn} লাইভ` : `${channel.category} channel live`,
+    ],
     alternates: { canonical: `/watch/${channel.slug}` },
     openGraph: {
       type: "video.other",
@@ -54,6 +61,18 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
   const cat = categoryMeta[channel.category];
   const isSport = channel.category === "Sports";
   const pageUrl = `${site.url}/watch/${channel.slug}`;
+  const catUrl = `${site.url}/category/${categorySlug(channel.category)}`;
+
+  const faq = [
+    {
+      q: `How can I watch ${channel.name} live for free?`,
+      a: `Just press play above — ${channel.name} streams live in your browser on BDTV Live, free and in ${channel.quality}, with no app, no signup and no subscription.`,
+    },
+    {
+      q: `Is ${channel.name} live streaming available on mobile?`,
+      a: `Yes, ${channel.name} plays directly on mobile, tablet and desktop browsers. The stream is mobile friendly and needs no download.`,
+    },
+  ];
 
   const videoLd = {
     "@context": "https://schema.org",
@@ -90,20 +109,30 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
         "@type": "ListItem",
         position: 2,
         name: channel.category,
-        item: `${site.url}/#${catAnchor(channel.category)}`,
+        item: catUrl,
       },
       { "@type": "ListItem", position: 3, name: channel.name, item: `${site.url}/watch/${channel.slug}` },
     ],
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   };
 
   return (
     <div className="watch">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <div className="container">
         <nav className="breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link> &nbsp;›&nbsp;
-          <Link href={`/#${catAnchor(channel.category)}`}>{channel.category}</Link> &nbsp;›&nbsp;
+          <Link href={`/category/${categorySlug(channel.category)}`}>{channel.category}</Link> &nbsp;›&nbsp;
           <span aria-current="page">{channel.name}</span>
         </nav>
 
@@ -160,6 +189,29 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
               <ChannelCard key={c.slug} channel={c} />
             ))}
           </ul>
+        </section>
+
+        <section className="seo-copy" aria-labelledby="about-channel-heading">
+          <h2 id="about-channel-heading">Watch {channel.name} live online free</h2>
+          <p>
+            {channel.desc} On BDTV Live you can stream {channel.name} live in {channel.quality}{" "}
+            straight from your browser — no app, no signup and no subscription. It works on mobile,
+            tablet and desktop. Explore more{" "}
+            <Link href={`/category/${categorySlug(channel.category)}`}>
+              live {channel.category.toLowerCase()} channels
+            </Link>{" "}
+            or browse all channels on the{" "}
+            <Link href="/">BDTV Live home page</Link>.
+          </p>
+          <h2 id="channel-faq-heading">Frequently asked questions</h2>
+          <dl className="faq">
+            {faq.map((f) => (
+              <div key={f.q} className="faq__item">
+                <dt>{f.q}</dt>
+                <dd>{f.a}</dd>
+              </div>
+            ))}
+          </dl>
         </section>
       </div>
     </div>

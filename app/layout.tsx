@@ -92,10 +92,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </span>
             </Link>
             <nav className="nav" aria-label="Primary">
-              <Link href="/#news">News</Link>
-              <Link href="/#entertainment">Entertainment</Link>
-              <Link href="/#sports">Sports</Link>
-              <Link href="/#movies">Movies</Link>
+              <Link href="/category/news">News</Link>
+              <Link href="/category/entertainment">Entertainment</Link>
+              <Link href="/category/sports">Sports</Link>
+              <Link href="/category/movies">Movies</Link>
             </nav>
           </div>
         </header>

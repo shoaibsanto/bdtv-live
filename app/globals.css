@@ -511,6 +511,52 @@ img {
 .seo-copy p {
   max-width: 820px;
 }
+.seo-copy h3 {
+  color: var(--text);
+  font-size: 1rem;
+  margin: 18px 0 4px;
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  max-width: 820px;
+  margin: 0;
+}
+.faq__item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+}
+.faq__item dt {
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.faq__item dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------- Category links ---------- */
+.cat-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+}
+.cat-link {
+  display: inline-block;
+  padding: 7px 12px;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.12));
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--card, #fff);
+  transition: border-color 0.15s, color 0.15s;
+}
+.cat-link:hover {
+  border-color: var(--accent, #0a7d5a);
+  color: var(--accent, #0a7d5a);
+}
 .hero__stats dd {
   margin: 0;
 }

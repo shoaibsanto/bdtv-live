@@ -12,26 +12,39 @@ function resolveBaseUrl(): string {
   return "http://localhost:3000";
 }
 
+// Total live channels — keep in sync with lib/channels.ts (used in copy & schema).
+export const CHANNEL_COUNT = 200;
+
 export const site = {
   url: resolveBaseUrl(),
   name: "BDTV Live",
-  title: "BDTV Live — বাংলাদেশি টিভি চ্যানেল লাইভ (Free HD)",
+  title: "BDTV Live — বাংলাদেশি টিভি চ্যানেল লাইভ দেখুন Free HD | 200+ Live TV",
   shortName: "BDTV Live",
   description:
-    "বাংলাদেশের জনপ্রিয় টিভি চ্যানেলগুলো ফ্রিতে লাইভ দেখুন — NTV, Somoy TV, Jamuna TV, Channel i, ATN News সহ ২২টি চ্যানেল। HD কোয়ালিটি, মোবাইল ফ্রেন্ডলি, কোনো অ্যাপ লাগবে না।",
+    "বাংলা টিভি লাইভ দেখুন ফ্রিতে — NTV, Somoy TV, Jamuna TV, Channel i, ATN News, খেলা ও সংবাদসহ ২০০+ বাংলাদেশি ও জনপ্রিয় লাইভ টিভি চ্যানেল। HD কোয়ালিটি, মোবাইল ফ্রেন্ডলি, কোনো অ্যাপ বা সাইন-আপ লাগবে না।",
   descriptionEn:
-    "Watch 22 popular Bangladeshi TV channels live for free in HD — NTV, Somoy TV, Jamuna TV, Channel i, ATN News and more. Fast, mobile friendly, no app required.",
+    "Watch 200+ Bangladeshi & popular live TV channels online free in HD — NTV, Somoy TV, Jamuna TV, Channel i, ATN News, plus live sports, news, movies & more. No app, no signup, mobile friendly.",
   locale: "bn_BD",
   keywords: [
-    "Bangla TV live",
+    "bangla tv live",
     "বাংলা টিভি লাইভ",
-    "Bangladeshi TV channels",
+    "live tv bangladesh",
+    "bd tv live",
+    "bdtv live",
+    "bangladeshi tv channels live",
+    "online tv bangla",
+    "অনলাইন টিভি",
+    "free bangla tv online",
+    "watch bangla channel online",
     "NTV live",
     "Somoy TV live",
     "Jamuna TV live",
     "Channel i live",
-    "BTV live",
-    "live tv bangladesh",
-    "free bangla iptv",
+    "ATN News live",
+    "bangla news live",
+    "live sports channel",
+    "cricket live",
+    "খেলা লাইভ",
+    "bangla natok live",
   ],
 };
